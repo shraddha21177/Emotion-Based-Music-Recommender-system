@@ -1,0 +1,373 @@
+/* ── Reset ── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Dark music background (same theme across all pages) ── */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 20px;
+    padding-top: 90px;  /* space for fixed navbar */
+}
+
+/* ── Musical note at top ── */
+.note {
+    font-size: 1.8em;
+    letter-spacing: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+/* ── Page heading ── */
+h2 {
+    color: #ffffff;
+    font-size: 1.6em;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+/* ── Mood subtitle ── */
+p.subtitle {
+    color: #a78bfa;
+    font-size: 0.95em;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* ── Songs list container ── */
+.songs-list {
+    width: 100%;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 55vh; /* Prevent overflowing screen height */
+    overflow-y: auto; /* Enable scroll */
+    padding-right: 8px; /* Space for scrollbar */
+}
+
+/* Custom scrollbar for songs list */
+.songs-list::-webkit-scrollbar {
+    width: 6px;
+}
+.songs-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+.songs-list::-webkit-scrollbar-thumb {
+    background: #a78bfa;
+    border-radius: 10px;
+}
+
+/* ── Each song card ── */
+.song-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ── Left side: song info ── */
+.song-info .title {
+    color: #ffffff;
+    font-size: 1em;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.song-info .artist {
+    color: #aaaacc;
+    font-size: 0.85em;
+}
+
+/* ── Play button (link) ── */
+.play-btn {
+    background: #7c3aed;
+    color: white;
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.play-btn:hover {
+    background: #5b21b6;
+}
+
+/* ── Empty / error message ── */
+.empty-msg {
+    color: #888aaa;
+    text-align: center;
+    font-size: 0.95em;
+    padding: 30px 0;
+}
+
+/* ── Back link at bottom ── */
+.back-link {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.85em;
+    color: #aaaacc;
+}
+
+.back-link a {
+    color: #a78bfa;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+/* ── Song card actions wrapper (Play + Update side by side) ── */
+.song-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* ── Small Edit button ── */
+.edit-btn {
+    background: transparent;
+    border: 1px solid #a78bfa;
+    color: #a78bfa;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.edit-btn:hover {
+    background: #a78bfa;
+    color: #fff;
+}
+
+/* ── Small Delete button ── */
+.delete-btn {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.delete-btn:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* ── Modal backdrop ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+/* ── Modal box ── */
+.modal-box {
+    background: linear-gradient(145deg, #1e1b4b, #2d2660);
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    border-radius: 18px;
+    padding: 34px 30px;
+    width: 92%;
+    max-width: 420px;
+    position: relative;
+    animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Close X button ── */
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #aaaacc;
+    font-size: 1.1em;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close:hover { color: #fff; }
+
+/* ── Modal title ── */
+.modal-title {
+    color: #ffffff;
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+/* ── Song name shown in modal ── */
+.modal-song-name {
+    color: #a78bfa;
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    word-break: break-word;
+}
+
+/* ── Label above input ── */
+.modal-label {
+    display: block;
+    color: #ccccee;
+    font-size: 0.82em;
+    margin-bottom: 8px;
+}
+
+/* ── URL input ── */
+.modal-input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(167,139,250,0.4);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 0.88em;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border 0.2s ease;
+}
+
+.modal-input:focus {
+    border-color: #a78bfa;
+}
+
+.modal-input::placeholder { color: #666888; }
+
+/* ── Feedback message ── */
+.modal-msg {
+    min-height: 18px;
+    font-size: 0.82em;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.modal-msg.success { color: #6ee7b7; }
+.modal-msg.error   { color: #f87171; }
+
+/* ── Modal buttons row ── */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.modal-cancel-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #aaaacc;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.modal-cancel-btn:hover { border-color: #fff; color: #fff; }
+
+.modal-save-btn {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 8px 22px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.2s ease;
+}
+
+.modal-save-btn:hover    { background: #5b21b6; }
+.modal-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Add New Song Header Layout ── */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.header-actions .subtitle {
+    margin-bottom: 0; /* Override default bottom margin */
+}
+
+/* ── Add New Song Button ── */
+.add-btn {
+    background: rgba(124, 58, 237, 0.2);
+    border: 1px dashed #a78bfa;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.add-btn:hover {
+    background: #a78bfa;
+    border-style: solid;
+}
+
+/* ── Select Dropdown in Modal ── */
+select.modal-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23A78BFA%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px top 50%;
+    background-size: 10px auto;
+}
+
+select.modal-input option {
+    background: #1e1b4b;
+    color: #fff;
+}

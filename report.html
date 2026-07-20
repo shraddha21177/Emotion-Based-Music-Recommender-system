@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Music Report</title>
+    <link rel="stylesheet" href="/static/navbar.css">
+    <link rel="stylesheet" href="/static/report.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+        <div class="nav-logo">🎵 Mood<span>Music</span></div>
+        <div class="nav-links">
+            <span class="nav-user" id="navUser"></span>
+            <a href="/emotion-page">Home</a>
+            <a href="/history-page">History</a>
+            <a href="/songs-page">Songs</a>
+            <a href="/report-page" class="active">Report</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="report-wrapper">
+
+        <!-- ── HEADER ── -->
+        <div class="report-header">
+            <div class="header-text">
+                <h1>📊 My Music Report</h1>
+                <p class="welcome-msg">Welcome, <strong id="displayName">User</strong>! Here's your listening activity.</p>
+            </div>
+            <div class="filter-area">
+                <label for="monthPicker">Filter by Month</label>
+                <input type="month" id="monthPicker" />
+                <button class="filter-btn" onclick="loadReport()">Apply</button>
+                <button class="filter-btn clear-btn" onclick="clearFilter()">All Time</button>
+            </div>
+        </div>
+
+        <!-- ── SUMMARY CARDS ── -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-icon">🎭</div>
+                <div class="stat-value" id="totalSessions">—</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value" id="topEmotion">—</div>
+                <div class="stat-label">Top Emotion</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="activeDays">—</div>
+                <div class="stat-label">Active Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📆</div>
+                <div class="stat-value" id="activeMonths">—</div>
+                <div class="stat-label">Active Months</div>
+            </div>
+        </div>
+
+        <!-- ── CHART + EMOTION BREAKDOWN ── -->
+        <div class="two-col">
+
+            <!-- Emotion Bar Chart -->
+            <div class="panel">
+                <h2 class="panel-title">🎨 Emotion Breakdown</h2>
+                <div class="chart-container">
+                    <canvas id="emotionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Emotion Summary Table -->
+            <div class="panel">
+                <h2 class="panel-title">📋 Emotion Summary</h2>
+                <div class="table-scroll">
+                    <table class="report-table" id="emotionTable">
+                        <thead>
+                            <tr><th>Emotion</th><th>Sessions</th></tr>
+                        </thead>
+                        <tbody id="emotionTableBody">
+                            <tr><td colspan="2" class="loading-cell">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── MONTHLY HISTORY ── -->
+        <div class="panel">
+            <h2 class="panel-title">📆 Monthly History</h2>
+            <div class="table-scroll">
+                <table class="report-table">
+                    <thead>
+                        <tr><th>Month</th><th>Sessions</th><th>Activity</th></tr>
+                    </thead>
+                    <tbody id="monthlyTableBody">
+                        <tr><td colspan="3" class="loading-cell">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── DETAILED LOG ── -->
+        <div class="panel">
+            <h2 class="panel-title">🗓️ Date-wise Session Log</h2>
+            <div class="table-scroll">
+                <table class="report-table">
+                    <thead>
+                        <tr><th>#</th><th>Date &amp; Time</th><th>Emotion</th><th>Song</th></tr>
+                    </thead>
+                    <tbody id="detailTableBody">
+                        <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- /report-wrapper -->
+
+    <script>
+        // ── Emotion emoji map ──
+        const emojiMap = {
+            happy:'😊', sad:'😢', angry:'😠', relaxed:'😌', breakup:'💔',
+            motivated:'💪', devotional:'🙏', romantic:'❤️', surprise:'😲',
+            excited:'🤩', calm:'🧘', energetic:'⚡', stressed:'😰',
+            bored:'😑', lonely:'😔', love:'💕'
+        };
+        function getEmoji(e) {
+            return emojiMap[(e||'').toLowerCase()] || '🎵';
+        }
+
+        // ── User info — fetch from DB for accurate name ──
+        const userId = localStorage.getItem('user_id') || '';
+
+        function applyUserName(name) {
+            localStorage.setItem('user_name', name);
+            document.getElementById('displayName').textContent = name;
+            const nu = document.getElementById('navUser');
+            if (nu) nu.textContent = '👤 ' + name;
+        }
+
+        // Try DB first, fall back to localStorage
+        if (userId) {
+            fetch('/get_user?user_id=' + encodeURIComponent(userId))
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') applyUserName(data.user_name);
+                    else applyUserName(localStorage.getItem('user_name') || 'User');
+                })
+                .catch(() => applyUserName(localStorage.getItem('user_name') || 'User'));
+        } else {
+            applyUserName(localStorage.getItem('user_name') || 'User');
+        }
+
+        // ── Chart instance ──
+        let emotionChart = null;
+
+        // ── Load Report ──
+        function loadReport() {
+            const month  = document.getElementById('monthPicker').value;
+            let url      = '/get_report?user_id=' + encodeURIComponent(userId);
+            if (month)   url += '&month=' + encodeURIComponent(month);
+
+            fetch(url)
+                .then(r => r.json())
+                .then(data => renderReport(data))
+                .catch(err => {
+                    console.error(err);
+                    showError('Failed to load report data.');
+                });
+        }
+
+        function clearFilter() {
+            document.getElementById('monthPicker').value = '';
+            loadReport();
+        }
+
+        // ── Render everything ──
+        function renderReport(data) {
+            const rows           = data.rows           || [];
+            const emotionSummary = data.emotion_summary|| [];
+            const dailySummary   = data.daily_summary  || [];
+            const monthlySummary = data.monthly_summary|| [];
+
+            // Stats cards
+            document.getElementById('totalSessions').textContent = rows.length;
+            document.getElementById('topEmotion').textContent =
+                emotionSummary.length ? (getEmoji(emotionSummary[0].emotion) + ' ' + cap(emotionSummary[0].emotion)) : '—';
+            document.getElementById('activeDays').textContent   = dailySummary.length;
+            document.getElementById('activeMonths').textContent = monthlySummary.length;
+
+            // Emotion chart
+            renderEmotionChart(emotionSummary);
+
+            // Emotion table
+            const etb = document.getElementById('emotionTableBody');
+            if (emotionSummary.length === 0) {
+                etb.innerHTML = '<tr><td colspan="2" class="empty-cell">No data yet.</td></tr>';
+            } else {
+                etb.innerHTML = emotionSummary.map((e, i) => `
+                    <tr>
+                        <td>${getEmoji(e.emotion)} ${cap(e.emotion)}</td>
+                        <td><span class="badge">${e.count}</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Monthly table
+            const maxM = monthlySummary.length ? Math.max(...monthlySummary.map(m=>m.count)) : 1;
+            const mtb  = document.getElementById('monthlyTableBody');
+            if (monthlySummary.length === 0) {
+                mtb.innerHTML = '<tr><td colspan="3" class="empty-cell">No data yet.</td></tr>';
+            } else {
+                mtb.innerHTML = monthlySummary.map(m => {
+                    const pct = Math.round((m.count / maxM) * 100);
+                    return `
+                        <tr>
+                            <td>${formatMonth(m.month)}</td>
+                            <td><span class="badge">${m.count}</span></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:${pct}%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Detail table
+            const dtb = document.getElementById('detailTableBody');
+            if (rows.length === 0) {
+                dtb.innerHTML = '<tr><td colspan="4" class="empty-cell">No sessions recorded yet.</td></tr>';
+            } else {
+                dtb.innerHTML = rows.map((r, i) => `
+                    <tr>
+                        <td class="row-num">${i + 1}</td>
+                        <td class="time-cell">${formatDateTime(r.time)}</td>
+                        <td>${getEmoji(r.emotion)} ${cap(r.emotion)}</td>
+                        <td class="song-cell">${r.song_title || '<span class="muted">—</span>'}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // ── Chart ──
+        function renderEmotionChart(emotionSummary) {
+            const labels = emotionSummary.map(e => cap(e.emotion));
+            const values = emotionSummary.map(e => e.count);
+            const colors = [
+                '#a78bfa','#60a5fa','#34d399','#f472b6','#fb923c',
+                '#facc15','#818cf8','#2dd4bf','#e879f9','#f87171',
+                '#a3e635','#38bdf8','#fb7185','#4ade80','#c084fc','#fbbf24'
+            ];
+
+            const ctx = document.getElementById('emotionChart').getContext('2d');
+            if (emotionChart) emotionChart.destroy();
+
+            if (labels.length === 0) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = 'rgba(167,139,250,0.3)';
+                ctx.font = '16px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data to display', ctx.canvas.width/2, ctx.canvas.height/2);
+                return;
+            }
+
+            emotionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sessions',
+                        data: values,
+                        backgroundColor: colors.slice(0, labels.length).map(c => c + 'cc'),
+                        borderColor:     colors.slice(0, labels.length),
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        maxBarThickness: 80
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,12,35,0.95)',
+                            titleColor: '#c4b5fd',
+                            bodyColor:  '#e2e8f0',
+                            borderColor: 'rgba(167,139,250,0.3)',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', font: { family: 'Inter', size: 12 } },
+                            grid:  { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        y: {
+                            ticks: { color: '#94a3b8', font: { family: 'Inter', size: 12 }, stepSize: 1 },
+                            grid:  { color: 'rgba(255,255,255,0.06)' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // ── Helpers ──
+        function cap(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+        function formatMonth(ym) {
+            if (!ym) return '—';
+            const [y, m] = ym.split('-');
+            const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return names[parseInt(m, 10) - 1] + ' ' + y;
+        }
+        function formatDateTime(dt) {
+            if (!dt) return '—';
+            const d = new Date(dt);
+            if (isNaN(d)) return dt;
+            return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+                   + ' ' +
+                   d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+        }
+        function showError(msg) {
+            ['emotionTableBody','monthlyTableBody','detailTableBody'].forEach(id => {
+                document.getElementById(id).innerHTML =
+                    `<tr><td colspan="4" class="empty-cell" style="color:#f87171">${msg}</td></tr>`;
+            });
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+
+        // ── Initial load ──
+        loadReport();
+    </script>
+</body>
+</html>

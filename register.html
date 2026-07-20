@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/login.css">
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="form-box login">
+        <h2>Register</h2>
+        <form onsubmit="return false;" autocomplete="off">
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" id="name" autocomplete="off" required>
+                <label>Name</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                <input type="email" id="email" autocomplete="off" required>
+                <label>Email</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <input type="password" id="password" autocomplete="new-password" required>
+                <label>Password</label>
+            </div>
+
+            <button type="submit" class="btn" onclick="register(event)">Register</button>
+
+            <div class="login-register">
+                <p>Already have an account? <a href="/" class="register-link">Login</a></p>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="/static/register.js"></script>
+<script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+</body>
+</html>

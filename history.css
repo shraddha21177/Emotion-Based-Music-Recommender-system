@@ -1,0 +1,147 @@
+/* ── Reset ── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Dark music background (same as emotion page) ── */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    padding-top: 90px;  /* space for fixed navbar */
+}
+
+/* ── Main white card container ── */
+.history-box {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    padding: 35px 40px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* ── Top musical note ── */
+.note {
+    font-size: 1.8em;
+    letter-spacing: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+/* ── Page title ── */
+h2 {
+    color: #ffffff;
+    font-size: 1.6em;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+/* ── Subtitle ── */
+p.subtitle {
+    color: #aaaacc;
+    font-size: 0.9em;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* ── Divider line ── */
+.divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+/* ── Scrollable history list container ── */
+#historyList {
+    max-height: 280px;   /* show only this much height */
+    overflow-y: auto;    /* scroll if items exceed max-height */
+    padding-right: 5px;  /* small space so scrollbar doesn't overlap text */
+}
+
+/* ── Scrollbar styling (optional, looks cleaner) ── */
+#historyList::-webkit-scrollbar {
+    width: 5px;
+}
+#historyList::-webkit-scrollbar-thumb {
+    background: #7c3aed;
+    border-radius: 10px;
+}
+
+/* ── Each history row ── */
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+/* ── Emotion label on the left ── */
+.history-item .emotion {
+    font-size: 1em;
+    font-weight: 600;
+    color: #a78bfa;
+}
+
+/* ── Time label on the right ── */
+.history-item .time {
+    font-size: 0.8em;
+    color: #888aaa;
+}
+
+/* ── Empty state message ── */
+.empty-msg {
+    text-align: center;
+    color: #888aaa;
+    font-size: 0.95em;
+    padding: 20px 0;
+}
+
+/* ── Go to Songs button ── */
+.btn {
+    margin-top: 25px;
+    width: 100%;
+    padding: 13px;
+    background: #7c3aed;
+    color: white;
+    font-size: 1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.2s ease;
+}
+
+.btn:hover {
+    background: #5b21b6;
+}
+
+/* ── Back link ── */
+.back-link {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.85em;
+    color: #aaaacc;
+}
+
+.back-link a {
+    color: #a78bfa;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Songs</title>
+    <link rel="stylesheet" href="/static/navbar.css">
+    <link rel="stylesheet" href="/static/songs.css">
+</head>
+
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+        <div class="nav-logo">🎵 Mood<span>Music</span></div>
+        <div class="nav-links">
+            <span class="nav-user" id="navUser"></span>
+            <a href="/emotion-page">Home</a>
+            <a href="/history-page">History</a>
+            <a href="/songs-page" class="active">Songs</a>
+            <a href="/report-page">Report</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Top decoration -->
+    <div class="note">🎵 🎶 🎵</div>
+
+    <!-- Title -->
+    <h2>Recommended Songs</h2>
+
+    <!-- Shows current mood (filled by JS) -->
+    <div class="header-actions">
+        <p class="subtitle" id="moodLabel">Loading...</p>
+        <button class="add-btn" onclick="openAddModal()">+ Add New Song</button>
+    </div>
+
+    <!-- Songs list (filled by JS) -->
+    <div class="songs-list" id="songsList">
+        <p class="empty-msg">Loading songs...</p>
+    </div>
+
+    <!-- Back link -->
+    <div class="back-link">
+        <a href="/history-page">← Back to History</a>
+    </div>
+
+    <!-- ── ADD NEW SONG MODAL ── -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeAddModal()">✕</button>
+            <h3 class="modal-title">➕ Add New Song</h3>
+            
+            <label class="modal-label" for="addTitleInput">Title</label>
+            <input type="text" id="addTitleInput" class="modal-input" placeholder="Song Title" />
+
+            <label class="modal-label" for="addArtistInput">Artist</label>
+            <input type="text" id="addArtistInput" class="modal-input" placeholder="Artist Name" />
+
+            <label class="modal-label" for="addEmotionInput">Emotion Category</label>
+            <select id="addEmotionInput" class="modal-input">
+                <option value="Happy">Happy</option>
+                <option value="Sad">Sad</option>
+                <option value="Angry">Angry</option>
+                <option value="Relaxed">Relaxed</option>
+                <option value="Romantic">Romantic</option>
+                <option value="Motivated">Motivated</option>
+                <option value="Devotional">Devotional</option>
+                <option value="Breakup">Breakup</option>
+                <option value="Surprise">Surprise</option>
+                <option value="Exited">Exited</option>
+                <option value="Calm">Calm</option>
+                <option value="Energetic">Energetic</option>
+                <option value="Stressed">Stressed</option>
+                <option value="Bored">Bored</option>
+                <option value="Lonely">Lonely</option>
+                <option value="Love">Love</option>
+
+            </select>
+
+            <label class="modal-label" for="addLinkInput">Link (YouTube/Spotify)</label>
+            <input type="url" id="addLinkInput" class="modal-input" placeholder="https://..." />
+
+            <div class="modal-msg" id="addModalMessage"></div>
+            <div class="modal-actions">
+                <button class="modal-cancel-btn" onclick="closeAddModal()">Cancel</button>
+                <button class="modal-save-btn" id="addSaveBtn" onclick="submitAddSong()">Add Song</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── EDIT SONG MODAL ── -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeEditModal()">✕</button>
+            <h3 class="modal-title">✏ Edit Song</h3>
+            
+            <label class="modal-label" for="editTitleInput">Title</label>
+            <input type="text" id="editTitleInput" class="modal-input" />
+
+            <label class="modal-label" for="editArtistInput">Artist</label>
+            <input type="text" id="editArtistInput" class="modal-input" />
+
+            <label class="modal-label" for="editEmotionInput">Emotion Category</label>
+            <select id="editEmotionInput" class="modal-input">
+                <option value="Happy">Happy</option>
+                <option value="Sad">Sad</option>
+                <option value="Angry">Angry</option>
+                <option value="Relaxed">Relaxed</option>
+                <option value="Romantic">Romantic</option>
+                 <option value="Motivated">Motivated</option>
+                <option value="Devotional">Devotional</option>
+                <option value="Breakup">Breakup</option>
+                <option value="Surprise">Surprise</option>
+                <option value="Exited">Exited</option>
+                <option value="Calm">Calm</option>
+                <option value="Energetic">Energetic</option>
+                <option value="Stressed">Stressed</option>
+                <option value="Bored">Bored</option>
+                <option value="Lonely">Lonely</option>
+                <option value="Love">Love</option>
+
+            </select>
+
+            <label class="modal-label" for="editLinkInput">Link (YouTube/Spotify)</label>
+            <input type="url" id="editLinkInput" class="modal-input" />
+
+            <div class="modal-msg" id="editModalMessage"></div>
+            <div class="modal-actions">
+                <button class="modal-cancel-btn" onclick="closeEditModal()">Cancel</button>
+                <button class="modal-save-btn" id="editSaveBtn" onclick="submitEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/songs.js"></script>
+    <script>
+        const uname = localStorage.getItem("user_name");
+        if (uname) document.getElementById("navUser").textContent = "👤 " + uname;
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "/";
+        }
+    </script>
+
+</body>
+</html>

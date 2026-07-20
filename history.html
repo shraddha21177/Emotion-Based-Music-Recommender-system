@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion History</title>
+    <link rel="stylesheet" href="/static/navbar.css">
+    <link rel="stylesheet" href="/static/history.css">
+</head>
+
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+        <div class="nav-logo">🎵 Mood<span>Music</span></div>
+        <div class="nav-links">
+            <span class="nav-user" id="navUser"></span>
+            <a href="/emotion-page">Home</a>
+            <a href="/history-page" class="active">History</a>
+            <a href="/songs-page">Songs</a>
+            <a href="/report-page">Report</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="history-box">
+
+        <!-- Top decoration -->
+        <div class="note">🎵 🎶 🎵</div>
+
+        <!-- Title -->
+        <h2>Your Mood History</h2>
+        <p class="subtitle">Here are your recent moods</p>
+
+        <hr class="divider">
+
+        <!-- History list will be loaded here by history.js -->
+        <div id="historyList">
+            <p class="empty-msg">Loading history...</p>
+        </div>
+
+        <!-- Go to Songs button -->
+        <button class="btn" onclick="goToSongs()">🎵 Go to Songs</button>
+
+        <!-- Back link -->
+        <div class="back-link">
+            <a href="/emotion-page">← Pick a different mood</a>
+        </div>
+
+    </div>
+
+    <script src="/static/history.js"></script>
+    <script>
+        const uname = localStorage.getItem("user_name");
+        if (uname) document.getElementById("navUser").textContent = "👤 " + uname;
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "/";
+        }
+    </script>
+
+</body>
+</html>

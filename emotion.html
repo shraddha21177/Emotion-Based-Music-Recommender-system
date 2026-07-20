@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Are You Feeling?</title>
+    <link rel="stylesheet" href="/static/navbar.css">
+    <link rel="stylesheet" href="/static/emotion.css">
+    <link 
+  href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+  rel="stylesheet"
+/>
+</head> 
+
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+        <div class="nav-logo">🎵 Mood<span>Music</span></div>
+        <div class="nav-links">
+            <a href="/emotion-page" class="active">Home</a>
+            <a href="/history-page">History</a>
+            <a href="/songs-page">Songs</a>
+            <a href="/report-page">Report</a>
+            <span class="nav-user" id="navUser"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Musical decoration -->
+    <div class="note">🎵 🎶 🎵</div>
+
+    <!-- Heading -->
+    <h2>How Are You Feeling Today?</h2>
+    <p class="subtitle">Pick your mood — we'll find the perfect music for you</p>
+
+    <!-- Emotion cards grid -->
+    <div class="emotion-grid">
+
+        <div class="card" onclick="selectEmotion(this, 'happy')">
+            <div class="emoji">😊</div>
+            <div class="label">Happy</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'sad')">
+            <div class="emoji">😢</div>
+            <div class="label">Sad</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'angry')">
+            <div class="emoji">😠</div>
+            <div class="label">Angry</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'relaxed')">
+            <div class="emoji">😌</div>
+            <div class="label">Relaxed</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'Breakup')">
+            <div class="emoji">💔</div>
+            <div class="label">Breakup</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'Motivated')">
+            <div class="emoji">💪</div>
+            <div class="label">Motivated</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'Devotional')">
+            <div class="emoji">🙏</div>
+            <div class="label">Devotional</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'romantic')">
+            <div class="emoji">❤️</div>
+            <div class="label">Romantic</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'surprise')">
+            <div class="emoji">😲</div>
+            <div class="label">Surprise</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'Excited')">
+            <div class="emoji">🤩</div>
+            <div class="label">Excited</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'Calm')">
+            <div class="emoji">🧘</div>
+            <div class="label">Calm</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'Energetic')">
+            <div class="emoji">⚡</div>
+            <div class="label">Energetic</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'stressed')">
+            <div class="emoji">😰</div>
+            <div class="label">Stressed</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'bored')">
+            <div class="emoji">😑</div>
+            <div class="label">Bored</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'lonely')">
+            <div class="emoji">😔</div>
+            <div class="label">Lonely</div>
+        </div>
+
+        <div class="card" onclick="selectEmotion(this, 'love')">
+            <div class="emoji">💕</div>
+            <div class="label">Love</div>
+        </div>
+
+    </div>
+
+    <!-- Continue button -->
+    <button class="btn" onclick="saveEmotion()">🎵 Find My Music</button>
+
+    <script src="/static/emotion.js"></script>
+    <script>
+        // Fetch user name from DB and update navbar
+        function loadUserName() {
+            const uid = localStorage.getItem('user_id');
+            if (!uid) return;
+            fetch('/get_user?user_id=' + uid)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        localStorage.setItem('user_name', data.user_name);
+                        document.getElementById('navUser').textContent = '👤 ' + data.user_name;
+                    }
+                })
+                .catch(() => {
+                    // Fallback to cached name
+                    const cached = localStorage.getItem('user_name');
+                    if (cached) document.getElementById('navUser').textContent = '👤 ' + cached;
+                });
+        }
+        loadUserName();
+
+        // Logout: clear storage and go to login page
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    </script>
+
+</body>
+</html>
